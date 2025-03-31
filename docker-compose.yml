@@ -1,0 +1,7 @@
+version: '2'
+services:
+  web:  # nom du service
+    container_name: "serveur-web"
+    image: "nginx:latest"
+    ports:
+      - "8000:80"  # Liste pour les ports (toujours avec des guillemets)
