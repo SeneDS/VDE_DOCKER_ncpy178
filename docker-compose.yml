@@ -1,7 +1,12 @@
-version: '2'
+version: '2.0'
 services:
-  web:  # nom du service
+  web:  # 1. Mon premier service
     container_name: "serveur-web"
     image: "nginx:latest"
     ports:
-      - "8000:80"  # Liste pour les ports (toujours avec des guillemets)
+      - "8001:80"  #Liste pour les ports (toujours avec des guillemets)
+  db:    # 2. Creation de mon deuxieme service
+    container_name : serveur-db
+    image: mysql
+    ports:
+        - "3306:3306"
