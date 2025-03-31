@@ -1,14 +1,4 @@
 version: '2.0'
 services:
-  web:  # 1. Mon premier service
-    container_name: "serveur-web"
-    image: "nginx:latest"
-    ports:
-      - "8001:80"  #Liste pour les ports (toujours avec des guillemets)
-  db:    # 2. Creation de mon deuxieme service
-    container_name : serveur-db
-    image: mysql
-    ports:
-        - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
+  ping:
+   build: . # ici on buite une image depuis le docker-compose.
