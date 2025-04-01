@@ -1,4 +1,10 @@
 version: '2.0'
 services:
-  ping:
-   build: . # ici on buite une image depuis le docker-compose.
+  web:
+    # 1. Mon premier service
+    container_name: "serveur-web"
+    image: "nginx:latest"
+    ports:
+      - "8001:80" # Liste pour les ports (toujours avec des guillemets)
+    volumes:
+      - "./html:/usr/share/nginx/html" # Correction du chemin relatif (ajout de ./)
