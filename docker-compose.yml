@@ -7,7 +7,8 @@ services:
       - "8001:80"  # Liste pour les ports 
     volumes:
       - web-file:/usr/share/nginx/html:rw  # rw est pas nécessaire ici (lecture-écriture par défaut)
-  
+    networks:
+      - "web"
   db:  # 2. Mon deuxième service
     container_name: "serveur-db"  
     image: "mysql:latest"  
@@ -17,10 +18,17 @@ services:
       - db-file:/var/lib/mysql:rw  # rw est aussi optionnel ici
     environment:
       - MYSQL_ROOT_PASSWORD=root  # Définit le mot de passe du compte root pour MySQL
-  
+    networks:
+      - "web"
   ping:
-    build: .  # Corrigé l'indentation pour un format correct
+    build: .  #Corrigé l'indentation pour un format correct
 
 volumes:
   web-file: {}  #Création du volume pour web (ubuntu)
-  db-file: {}  # Création du volume pour MySQL
+  db-file: {}   # Création du volume pour MySQL
+networks:
+  web:
+   driver: "bridge"
+   ipam: # ça c'est le sous réseau
+    config:
+     - subnet : 172.20.20.0/24
