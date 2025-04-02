@@ -1,5 +1,8 @@
 version: '2.0'
 services:
+
+
+
   web:  # 1. Mon premier service
     container_name: "serveur-web"
     image: "nginx:latest"
@@ -8,7 +11,10 @@ services:
     volumes:
       - web-file:/usr/share/nginx/html:rw  # rw est pas nécessaire ici (lecture-écriture par défaut)
     networks:
-      - "web"
+      - "front-web"
+
+
+
   db:  # 2. Mon deuxième service
     container_name: "serveur-db"  
     image: "mysql:latest"  
@@ -19,16 +25,30 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root  # Définit le mot de passe du compte root pour MySQL
     networks:
-      - "web"
+      - "back-web"
+
+
   ping:
-    build: .  #Corrigé l'indentation pour un format correct
+    build: .  
+    networks: # On ajoute le prseau au ping pour qu'il pluisse comminquer avec les autres services
+      - "front-web"
+      - "back-web"
+
 
 volumes:
   web-file: {}  #Création du volume pour web (ubuntu)
   db-file: {}   # Création du volume pour MySQL
 networks:
-  web:
+  front-web: # Le réseau front-web
    driver: "bridge"
    ipam: # ça c'est le sous réseau
     config:
      - subnet : 172.20.20.0/24
+  networks: #Le réseau back-web
+  back-web:
+   driver: "bridge"
+   ipam: # ça c'est le sous réseau
+    config:
+     - subnet : 172.21.20.0/24
+
+# On déclare un noveau back-web en bas réseau qui permet au service ping de commmuniquer avec les deux autres  services qui entre eux de communiquent pas car l'un etant dans le réeau front et l'autre dans le resaeu back.
