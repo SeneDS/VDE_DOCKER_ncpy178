@@ -5,6 +5,10 @@ services:
     container_name: "serveur-web"
     image: "nginx:latest"
     ports:
-      - "8001:80" # Liste pour les ports (toujours avec des guillemets)
+      - "8001:80" 
     volumes:
-      - "./html:/usr/share/nginx/html" # Correction du chemin relatif (ajout de ./)
+      - web-file:/usr/share/nginx/html:rw    #web-file est le nom du volume Docker que nous définissons plus bas./usr/share/nginx/html est l'emplacement dans le conteneur où les fichiers de notre application web seront accessibles par Nginx.  Ce volume est stocké de manière persistante par Docker en dehors du conteneur.
+volumes:
+  web-file: {} #La syntaxe {} signifie que le volume est créé avec les paramètres par défaut.
+
+
