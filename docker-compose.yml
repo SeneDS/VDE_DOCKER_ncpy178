@@ -1,54 +1,66 @@
 version: '2.0'
+
 services:
 
-
-
-  web:  # 1. Mon premier service
+  web:
     container_name: "serveur-web"
     image: "nginx:latest"
     ports:
-      - "8001:80"  # Liste pour les ports 
+      - "8001:80"
     volumes:
-      - web-file:/usr/share/nginx/html:rw  # rw est pas nécessaire ici (lecture-écriture par défaut)
+      - web-file:/usr/share/nginx/html
     networks:
-      - "front-web"
-
-
-
-  db:  # 2. Mon deuxième service
-    container_name: "serveur-db"  
-    image: "mysql:latest"  
+      - front-web
+#################Redirection des logs ici
+    logging:  
+      driver: "syslog"
+      options:
+        syslog-address: "udp://localhost:514"
+#*********************************************************************************************************************************************************
+  db:
+    container_name: "serveur-db"
+    image: "mysql:latest"
     ports:
-      - "3306:3306"  
+      - "3306:3306"
     volumes:
-      - db-file:/var/lib/mysql:rw  # rw est aussi optionnel ici
+      - db-file:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=root  # Définit le mot de passe du compte root pour MySQL
+      - MYSQL_ROOT_PASSWORD=root
     networks:
-      - "back-web"
-
-
+      - back-web
+#################Redirection des logs ici
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "udp://localhost:514"
+#******************************************************************************************************************************************************************
   ping:
-    build: .  
-    networks: # On ajoute le prseau au ping pour qu'il pluisse comminquer avec les autres services
-      - "front-web"
-      - "back-web"
-
+    build: .
+    networks:
+      - front-web
+      - back-web
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "udp://localhost:514"
 
 volumes:
-  web-file: {}  #Création du volume pour web (ubuntu)
-  db-file: {}   # Création du volume pour MySQL
-networks:
-  front-web: # Le réseau front-web
-   driver: "bridge"
-   ipam: # ça c'est le sous réseau
-    config:
-     - subnet : 172.20.20.0/24
-  networks: #Le réseau back-web
-  back-web:
-   driver: "bridge"
-   ipam: # ça c'est le sous réseau
-    config:
-     - subnet : 172.21.20.0/24
+  web-file: {}
+  db-file: {}
 
-# On déclare un noveau back-web en bas réseau qui permet au service ping de commmuniquer avec les deux autres  services qui entre eux de communiquent pas car l'un etant dans le réeau front et l'autre dans le resaeu back.
+networks:
+  front-web:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.20.0/24
+
+  back-web:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.20.0/24
+
+
+
+## On a utilisé 'syslog' On peut aussi utiliser gelf avec kibana pour les logs ou d'autres outils pour une visualisation interactive mais également d'autres outils
